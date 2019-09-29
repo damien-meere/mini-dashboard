@@ -100,10 +100,7 @@ function show_gender_balance(ndx) {
 }
 
 function show_rank_distribution(ndx){
-    var dim = ndx.dimension(dc.pluck('sex'));
-
     // We need to work out what percentage of men are professors, assistant professors, and associate professors, and the same for women
-
     function rankByGender (dimension, rank){
         return dimension.group().reduce(
             function (p,v){
@@ -126,9 +123,31 @@ function show_rank_distribution(ndx){
         );
     }
 
+    var dim = ndx.dimension(dc.pluck('sex'));
     var profByGender = rankByGender(dim, "Prof");
     var asstProfByGender = rankByGender(dim, "AsstProf");
     var assocProfByGender = rankByGender(dim, "AssocProf");
 
+    dc.barChart("#rank-distribution")
+        .width(400)
+        .height(300)
+        .dimension(dim)
+        .group(profByGender, "Prof")
+        .stack(asstProfByGender, "Asst Prof")
+        .stack(assocProfByGender, "Assoc Prof")
+        .valueAccessor(function(d){
+            if(d.value.total >0){
+                // The total part of the data structure, our value, is the total number of men or women that have been found.
+                // And then the match is the number of those that are professors, assistant professors, associate professors, and so on.
+                // So what we need to do for each value that we're plotting is find what percentage of the total is the match.
+                return (d.value.match / d.value.total)* 100;
+            }else {
+                return 0;
+            }
+        })
+        .x(d3.scale.ordinal())
+        .xUnits(dc.units.ordinal)
+        .legend(dc.legend().x(320).y(20).itemHeight(15).gap(5))
+        .margins({top: 10, right: 100, bottom: 30, left: 30});
 
 }
