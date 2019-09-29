@@ -10,6 +10,9 @@ function makeGraphs(error, salaryData) {
     // And we're going to convert the salaries to integers.
     salaryData.forEach(function(d){
         d.salary = parseInt(d.salary);
+
+        // We wrap yrs.service  in the square bracket and quotes, rather than using the dot notation because years of service actually has a dot in it, so it would cause problems
+        d.yrs_service = parseInt(d["yrs.service"]);
     });
 
     show_discipline_selector(ndx);
@@ -199,8 +202,8 @@ function show_rank_distribution(ndx){
 
 
 function show_service_to_salary_correlation(ndx){
-    var eDim = ndx.dimension(dc.pluck('yrs_service'));
-    var experienceDim = ndx.dimension(function(d){
+    var eDim = ndx.dimension(dc.pluck("yrs_service"));
+    var experienceDim = ndx.dimension(function(d) {
         return [d.yrs_service, d.salary];
     });
     var experienceSalaryGroup = experienceDim.group();
@@ -217,8 +220,8 @@ function show_service_to_salary_correlation(ndx){
         .brushOn(false)
         .symbolSize(8)
         .clipPadding(10)
-        .yAxis("Years of Service")
-        .title(function(d){
+        .xAxisLabel("Years Of Service")
+        .title(function(d) {
             //his relates to that years of service and salary dimension. Years = 0, Salary = 1
             return "Earned " + d.key[1];
         })
