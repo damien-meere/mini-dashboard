@@ -21,6 +21,8 @@ function makeGraphs(error, salaryData) {
     show_average_salaries(ndx);
     show_rank_distribution(ndx);
 
+    show_service_to_salary_correlation(ndx);
+
     dc.renderAll();
 }
 
@@ -193,4 +195,34 @@ function show_rank_distribution(ndx){
         .xUnits(dc.units.ordinal)
         .legend(dc.legend().x(320).y(20).itemHeight(15).gap(5))
         .margins({top: 10, right: 100, bottom: 30, left: 30});
+}
+
+
+function show_service_to_salary_correlation(ndx){
+    var eDim = ndx.dimension(dc.pluck('yrs_service'));
+    var experienceDim = ndx.dimension(function(d){
+        return [d.yrs_service, d.salary];
+    });
+    var experienceSalaryGroup = experienceDim.group();
+
+    // Get minimum years with bottom & maximum with top
+    var minExperience = eDim.bottom(1)[0].yrs_service;
+    var maxExperience = eDim.top(1)[0].yrs_service;
+
+    dc.scatterPlot("#service-salary")
+        .width(800)
+        .height(400)
+        // in this case we use linear instead of ordinal as we're looking at progression through values as opposed to comparing datasets
+        .x(d3.scale.linear().domain([minExperience, maxExperience]))
+        .brushOn(false)
+        .symbolSize(8)
+        .clipPadding(10)
+        .yAxis("Years of Service")
+        .title(function(d){
+            //his relates to that years of service and salary dimension. Years = 0, Salary = 1
+            return "Earned " + d.key[1];
+        })
+        .dimension(experienceDim)
+        .group(experienceSalaryGroup)
+        .margins({top:10, right: 50, bottom: 75, left: 75});
 }
