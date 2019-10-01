@@ -17,8 +17,8 @@ function makeGraphs(error, salaryData) {
 
     show_discipline_selector(ndx);
 
-    show_percent_that_are_professors(ndx, "Female", "#percentage-of-women-professors");
-    show_percent_that_are_professors(ndx, "Male", "#percentage-of-men-professors");
+    show_percent_that_are_professors(ndx, "Female", "#percent-of-women-professors");
+    show_percent_that_are_professors(ndx, "Male", "#percent-of-men-professors");
 
     show_gender_balance(ndx);
     show_average_salaries(ndx);
@@ -197,6 +197,7 @@ function show_rank_distribution(ndx){
         })
         .x(d3.scale.ordinal())
         .xUnits(dc.units.ordinal)
+        .xAxisLabel("Gender")
         .legend(dc.legend().x(320).y(20).itemHeight(15).gap(5))
         .margins({top: 10, right: 100, bottom: 30, left: 30});
 }
